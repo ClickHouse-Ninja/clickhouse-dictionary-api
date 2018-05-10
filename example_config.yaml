@@ -1,0 +1,25 @@
+---
+sources:
+  - source: mysql
+    name : "mysql_source"
+    dsn  : "user:password@/dbname" # [username[:password]@][protocol[(address)]]/dbname[?param1=value1&...&paramN=valueN]
+ 
+  - source: postgres
+    name : "postgresql_source" 
+    dsn  : "postgres://pqgotest:password@localhost/pqgotest?sslmode=verify-full" # https://www.postgresql.org/docs/current/static/libpq-connect.html#LIBPQ-CONNSTRING
+ 
+  - source: postgres
+    name : "postgresql_source_2" 
+    dsn  : "postgres://pqgotest:password@localhost/pqgotest?sslmode=verify-full"
+
+dictionaries:
+  countries:
+      source  : "mysql_source"
+      table   : "dictionaries.countries"
+      columns : ["id", "code", "name"]
+      where   : "is_active = 1"
+  languages:
+      source  : "postgresql_source"
+      table   : "dictionaries.languages"
+      columns : ["id", "code", "name"]
+      where   : "is_active = true"
