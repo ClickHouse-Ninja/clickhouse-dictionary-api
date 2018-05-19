@@ -1,0 +1,10 @@
+[Unit]
+Description=HTTP source for the ClickHouse external dictionaries
+           
+[Service]
+Type=simple
+ExecStart=/usr/bin/clickhouse-dictionary-api -c /etc/clickhouse-dictionary-api/config.yaml
+Restart=always
+           
+[Install]
+WantedBy=default.target

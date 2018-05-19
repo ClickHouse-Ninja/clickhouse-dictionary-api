@@ -5,27 +5,17 @@ import (
 	"io/ioutil"
 	"log"
 
+	"github.com/ClickHouse-Ninja/clickhouse-dictionary-api/src/dictionary"
 	"gopkg.in/yaml.v2"
 )
 
 var config struct {
-	Sources []struct {
-		Source string `yaml:"source"`
-		DSN    string `yaml:"dsn"`
-		Name   string `yaml:"name"`
-	} `yaml:"sources"`
-	Dictionaries map[string]dictionary `yaml:"dictionaries"`
-}
-
-type dictionary struct {
-	Source  string   `yaml:"source"`
-	Table   string   `yaml:"table"`
-	Columns []string `yaml:"columns"`
-	Where   string   `yaml:"where"`
+	Address      string                           `yaml:"address"`
+	Sources      []dictionary.Source              `yaml:"sources"`
+	Dictionaries map[string]dictionary.Dictionary `yaml:"dictionaries"`
 }
 
 var (
-	listenAddr = flag.String("addr", ":8080", "")
 	configPath = flag.String("c", "config.yaml", "")
 )
 
