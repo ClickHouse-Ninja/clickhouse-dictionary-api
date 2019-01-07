@@ -1,0 +1,22 @@
+---
+
+address: :8080
+
+sources:
+  - source: postgres
+    name : "postgres" 
+    dsn  : "postgres://stage:RUq8Ev6x2N@10.10.10.2:5432/stagesite?application_name=clickhouse_dictionary_api&sslmode=disable"
+    max_open_conns: 4
+    max_idle_conns: 2
+    conn_max_lifetime: 10
+
+dictionaries:
+  stagesite_dict_video_studio:
+      source  : "postgres"
+      table   : "public.dict_video_our"
+      columns : ['"studioId"', '"isOur"','"videoId"']
+  stagesite_dict_statistic_ip_blacklist:
+      source  : "postgres"
+      table   : "public.statistic_ip_blacklist"
+      columns : ['"ipLong"','"block"']
+      where: "block=true"
