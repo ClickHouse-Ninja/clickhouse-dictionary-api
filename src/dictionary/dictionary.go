@@ -21,8 +21,10 @@ type Dictionary struct {
 func Handler(dict *Dictionary) (http.HandlerFunc, error) {
 	const updatedAtLayout = "2006-01-02 15:04:05"
 	var (
-		query          = fmt.Sprintf("SELECT %[1]s FROM %[2]s", strings.Join(dict.Columns, ", "), dict.Table)
-		connect, found = sources[dict.Source]
+		query           = fmt.Sprintf("SELECT %[1]s FROM %[2]s", strings.Join(dict.Columns, ", "), dict.Table)
+		dictWhere       = dict.Where
+		dictUpdateField = dict.UpdateField
+		connect, found  = sources[dict.Source]
 	)
 
 	if !found {
@@ -31,18 +33,17 @@ func Handler(dict *Dictionary) (http.HandlerFunc, error) {
 
 	return func(rw http.ResponseWriter, req *http.Request) {
 		var where []string
-		if len(dict.Where) != 0 {
-			where = append(where, dict.Where)
+		if len(dictWhere) != 0 {
+			where = append(where, dictWhere)
 		}
-		if updatedAt := req.URL.Query().Get(dict.UpdateField); len(updatedAt) != 0 {
+		if updatedAt := req.URL.Query().Get(dictUpdateField); len(updatedAt) != 0 {
 			time, err := time.Parse(updatedAtLayout, updatedAt)
 			if err != nil {
 				log.Printf("invalid time format: %v", err)
 				return
 			}
-			where = append(where, fmt.Sprintf(dict.UpdateField+" > '%s'", time.Format(updatedAtLayout)))
+			where = append(where, fmt.Sprintf(dictUpdateField+" > '%s'", time.Format(updatedAtLayout)))
 		}
-
 		querySQL := query
 		if len(where) != 0 {
 			querySQL = querySQL + " WHERE " + strings.Join(where, " AND ")
