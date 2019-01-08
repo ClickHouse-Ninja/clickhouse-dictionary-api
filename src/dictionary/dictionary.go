@@ -1,6 +1,7 @@
 package dictionary
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
@@ -66,7 +67,12 @@ func Handler(dict *Dictionary) (http.HandlerFunc, error) {
 
 		for _, columnType := range columnTypes {
 			columns = append(columns, columnType.Name())
-			values = append(values, reflect.New(columnType.ScanType()).Interface())
+			switch columnType.ScanType().Kind() {
+			case reflect.String:
+				values = append(values, &sql.NullString{})
+			default:
+				values = append(values, reflect.New(columnType.ScanType()).Interface())
+			}
 		}
 
 		output := FormatFactory(req.URL.Query().Get("format"), columns, rw)
